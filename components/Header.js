@@ -5,6 +5,8 @@ import { AiOutlineDown } from 'react-icons/ai'
 import { HiOutlineDotsVertical } from 'react-icons/hi'
 import ethLogo from '../assets/eth.png'
 import uniswapLogo from '../assets/uniswap.png'
+import { TransactionContext } from "../context/TransactionContext";
+import { useContext } from "react";
 
 const style = {
     wrapper: `p-4 w-screen flex justify-between items-center`,
@@ -23,6 +25,7 @@ const style = {
 
 const Header = () => {
     const [selectedNav, setSelectedNav] = useState('swap');
+    const { currentAccount, connectWallet } = useContext(TransactionContext);
 
     return (
         <div className={style.wrapper}>
@@ -76,14 +79,21 @@ const Header = () => {
                         <AiOutlineDown />
                     </div>
                 </div>
-            
-                <div
-                    className={`${style.button} ${style.buttonPadding}`}
-                >
-                    <div className={`${style.buttonAccent} ${style.buttonPadding}`}>
-                        Connect Wallet
+                        
+                {currentAccount ? (
+                    <div className={`${style.button} ${style.buttonPadding}`}>
+                        <div className={style.buttonTextContainer}>0x9e2...58Dc</div>
                     </div>
-                </div>
+                ) : (
+                    <div
+                        onClick={() => connectWallet()}
+                        className={`${style.button} ${style.buttonPadding}`}
+                    >
+                        <div className={`${style.buttonAccent} ${style.buttonPadding}`}>
+                            Connect Wallet
+                        </div>
+                    </div>
+                )}
                 
                 <div className={`${style.button} ${style.buttonPadding}`}>
                     <div className={`${style.buttonIconContainer} mx-2`}>
