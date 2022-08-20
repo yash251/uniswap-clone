@@ -10,6 +10,11 @@ if (typeof window !== 'undefined') {
 
 export const TransactionProvider = ({ children }) => {
     const [currentAccount, setCurrentAccount] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        addressTo: '',
+        amount: '',
+    })
 
     useEffect(() => {
       checkIfWalletIsConnected();
@@ -47,9 +52,46 @@ export const TransactionProvider = ({ children }) => {
             const transactionContract = getEthereumContract();
 
             const parsedAmount = ethers.utils.parseEther(amount);
+
+            await metamask.request({
+                method: 'eth_sendTransaction',
+                params: [
+                    {
+                        from: connectedAccount,
+                        to: addressTo,
+                        value: parsedAmount._hex,
+                    },
+                ],
+            })
+
+            const transactionHash = await transactionContract.publishTransaction(
+                addressTo,
+                parsedAmount,
+                `Transferring ETH ${parsedAmount} to ${addressTo}`,
+                'TRANSFER'
+            )
+
+            setIsLoading(true);
+
+            await transactionHash.wait();
+
+            //DB
+            // await saveTransaction(
+            //     transactionHash.hash,
+            //     amount,
+            //     connectedAccount,
+            //     addressTo
+            // )
+
+            setIsLoading(false);
+
         } catch (error) {
             console.log(error);
         }
+    }
+
+    const handleChange = (e, name) => {
+        formData((prevState) => ({ ...prevState, [name]: e.target.value }))
     }
 
     return (
@@ -57,6 +99,8 @@ export const TransactionProvider = ({ children }) => {
             value={{
                 connectWallet,
                 currentAccount,
+                sendTransaction,
+                handleChange,
             }}
         >
             {children}
