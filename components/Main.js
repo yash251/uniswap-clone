@@ -21,6 +21,15 @@ const style = {
 
 const Main = () => {
     const { formData, handleChange, sendTransaction } = useContext(TransactionContext);
+
+    const handleSubmit = async (e) => {
+        const { addressTo, amount } = formData;
+        e.preventDefault();
+
+        if (!addressTo || !amount) return
+
+        sendTransaction();
+    }
     
     return (
         <div className={style.wrapper}>
