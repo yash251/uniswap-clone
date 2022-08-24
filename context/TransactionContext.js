@@ -35,8 +35,8 @@ export const TransactionProvider = ({ children }) => {
     }, [])
 
     useEffect(() => {
-        if (!currentAccount) return;
-        (async () => {
+        if (!currentAccount) return
+        ;(async () => {
             const userDoc = {
                 _type: 'users',
                 _id: currentAccount,
@@ -163,7 +163,8 @@ export const TransactionProvider = ({ children }) => {
                 currentAccount,
                 sendTransaction,
                 handleChange,
-                formData
+                formData,
+                isLoading,
             }}
         >
             {children}
